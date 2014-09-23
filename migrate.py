@@ -40,7 +40,7 @@ parser.add_option("-d", "--github_repo", dest="github_repo",
     help="GitHub to add issues to. Format: <username>/<repo name>")
 
 parser.add_option("-s", "--bitbucket_repo", dest="bitbucket_repo",
-    help="Bitbucket repo to pull data from.")
+    help="Bitbucket repo to pull data from. Format: <username>/<repo name>")
 
 parser.add_option("-u", "--bitbucket_username", dest="bitbucket_username",
     help="Bitbucket username")
@@ -81,7 +81,7 @@ def format_name(issue):
 
 def format_body(issue):
     content = clean_body(issue.get('content'))
-    url = "https://bitbucket.org/%s/%s/issue/%s" % (options.bitbucket_username, options.bitbucket_repo, issue['local_id'])
+    url = "https://bitbucket.org/%s/issue/%s" % (options.bitbucket_repo, issue['local_id'])
     return content + """\n
 ---------------------------------------
 - Bitbucket: %s
@@ -120,7 +120,7 @@ def get_comments(issue):
     '''
     Fetch the comments for an issue
     '''
-    url = "https://api.bitbucket.org/1.0/repositories/%s/%s/issues/%s/comments/" % (options.bitbucket_username, options.bitbucket_repo, issue['local_id'])
+    url = "https://api.bitbucket.org/1.0/repositories/%s/issues/%s/comments/" % (options.bitbucket_repo, issue['local_id'])
     result = json.loads(urllib2.urlopen(url).read())
 
     comments = []
@@ -141,7 +141,7 @@ def get_comments(issue):
 issue_counts = 0
 issues = []
 while True:
-    url = "https://api.bitbucket.org/1.0/repositories/%s/%s/issues/?start=%d" % (options.bitbucket_username, options.bitbucket_repo, options.start-1) #-1 because the start option is id-1
+    url = "https://api.bitbucket.org/1.0/repositories/%s/issues/?start=%d" % (options.bitbucket_repo, options.start-1) #-1 because the start option is id-1
     try:
         response = urllib2.urlopen(url)
     except urllib2.HTTPError as ex:
